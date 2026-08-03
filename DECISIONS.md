@@ -212,6 +212,26 @@ DMetaphone still raises `UnicodeEncodeError` on non-ASCII input through the
 Python API, exactly as the original did — no test or readme defines an
 alternate intent for it.
 
+**Shared root cause — the same directive silences DMetaphone, deliberately
+replicated.** The `# cython: c_string_encoding=ascii` directive is
+module-wide: it sits at the top of `src/fuzzy.pyx` and governs *every*
+Python→C string marshalling in the module, not just Soundex's.
+`DMetaphone.__call__` assigns its input `str` to a `char *` under the same
+directive, so the original also raises `UnicodeEncodeError` on any non-ASCII
+input to DMetaphone through the Python API, before the C algorithm ever
+runs. A side effect: the original C algorithm's two Latin-1 arms — byte
+`0xC7` ('Ç' → S) and byte `0xD1` ('Ñ' → N), ported as byte matches in
+`rust/fuzzy-core/src/dmetaphone.rs` and reachable only through the raw
+`dmetaphone_bytes` API — are unreachable (dead code) from Python, because no
+Python `str` can ever carry those raw bytes across the ASCII-strict
+boundary. We treat this as a deliberately **replicated known limitation, not
+a third sanctioned divergence**: unlike #14/#15 there is no upstream issue
+and no test or readme defines a correct behavior to restore, so byte-exact
+replication of the original's raising behavior is the equivalence-correct
+choice. The disclosure wording lives in the section 6 known-limitations list
+(items 1 and 3); this paragraph only records that the root cause is the same
+one as bug #15.
+
 ---
 
 ## 5. Intentional divergences — exactly two classes
