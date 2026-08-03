@@ -1,0 +1,15 @@
+[build-system]
+requires = ["maturin>=1.7,<2.0"]
+build-backend = "maturin"
+
+[project]
+name = "fuzzy"
+version = "0.1.0"
+description = "Phonetic algorithms (Soundex, NYSIIS, Double Metaphone) - safe-Rust port of yougov/fuzzy"
+requires-python = ">=3.9"
+
+[tool.maturin]
+# The Python module name MUST be `fuzzy` (architecture.md section 6); the
+# Cargo package is `fuzzy-py`, so point maturin at the cdylib explicitly.
+module-name = "fuzzy"
+bindings = "pyo3"

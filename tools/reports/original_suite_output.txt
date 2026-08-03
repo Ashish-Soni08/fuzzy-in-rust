@@ -1,0 +1,15 @@
+﻿============================= test session starts =============================
+platform win32 -- Python 3.13.7, pytest-9.1.1, pluggy-1.6.0 -- G:\AI\Projects\Github\Code-Resurrection\.venv\Scripts\python.exe
+cachedir: .pytest_cache
+rootdir: G:\AI\Projects\Github\Code-Resurrection\fuzzy-in-rust
+configfile: pytest.ini
+collecting ... collected 5 items
+
+tests/original/test_fuzzy.py::test_soundex_does_not_mutate_strings PASSED [ 20%]
+tests/original/test_fuzzy.py::test_soundex_result XPASS (issue #14)      [ 40%]
+tests/original/test_fuzzy.py::test_soundex_Test XPASS (issue #14)        [ 60%]
+tests/original/test_fuzzy.py::test_soundex_non_ascii XPASS (issue #15)   [ 80%]
+tests/original/test_fuzzy.py::test_DMetaphone PASSED                     [100%]
+
+======================== 2 passed, 3 xpassed in 0.07s =========================
+

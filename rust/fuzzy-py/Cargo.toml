@@ -1,0 +1,18 @@
+[package]
+name = "fuzzy-py"
+version = "0.1.0"
+edition = "2021"
+description = "PyO3 bindings exposing the fuzzy-core port as the Python module `fuzzy`"
+license = "MIT"
+
+[lib]
+# The cdylib name MUST be `fuzzy`: the original suite does `import fuzzy`
+# (architecture.md section 6).
+name = "fuzzy"
+crate-type = ["cdylib"]
+
+# pyo3 0.23 + extension-module is the mission-pinned binding stack
+# (AGENTS.md Dependencies); fuzzy-core is the port itself.
+[dependencies]
+fuzzy-core = { path = "../fuzzy-core" }
+pyo3 = { version = "0.23", features = ["extension-module"] }
