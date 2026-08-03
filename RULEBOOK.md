@@ -139,7 +139,7 @@ Port `nysiis()` from `src/fuzzy.pyx` lines 81–185 **exactly**. Pipeline (order
 9. First-vowel restore: if `first` is a vowel, force output position 0 back to `first`. **Quirk:** in Python `'' in 'AEIOU'` is `True`, so empty input takes this branch too (`nysiis('') == ''`). Implement as: if `first` is empty OR a vowel → set/replace the first output char with `first` (gap G2).
 10. Collapse CONSECUTIVE duplicate chars only; join.
 
-Lookup tables — copy verbatim from `src/fuzzy.pyx` (`_nysiis_suffix_map` 10 entries, `_nysiis_transforms` 18, `_nysiis_trans_not_first` 18, `_nysiis_trans_middle` 1):
+Lookup tables — copy verbatim from `src/fuzzy.pyx` (`_nysiis_suffix_map` 10 entries, `_nysiis_transforms` 18, `_nysiis_trans_not_first` 19 (15 H/W-vowel pairs + EV, M, Q, Z), `_nysiis_trans_middle` 1):
 
 ```python
 _nysiis_suffix_map = {'IX':'IC','EX':'EC','YE':'Y','EE':'Y','IE':'Y',
