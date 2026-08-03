@@ -1,0 +1,20 @@
+{
+  "algo": "dmetaphone",
+  "seed": 20260803,
+  "cases": 50000,
+  "corpora": {
+    "empty": 522,
+    "single_char": 1639,
+    "ascii_words": 22612,
+    "name_like": 13624,
+    "mixed_case": 6231,
+    "digits_punct": 4310,
+    "very_long": 1062
+  },
+  "mismatch_count": 0,
+  "mismatches": [],
+  "elapsed_s": 0.785,
+  "timestamp": "2026-08-03T05:31:14+00:00",
+  "mode": "fixed",
+  "selftest": false
+}
