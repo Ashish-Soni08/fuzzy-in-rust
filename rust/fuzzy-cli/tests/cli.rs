@@ -189,3 +189,91 @@ fn cli_nysiis_quirk_cases() {
     let lines = stdout_lines(&stdout);
     assert_eq!(lines, vec!["STRAS", "MCBATH", "FASTAR", ""]);
 }
+
+// ---------------------------------------------------------------------------
+// dmetaphone dispatch (dmetaphone-port feature): real outputs through the
+// exe. Protocol: `dmetaphone <size> <word>` -> `<primary>|<secondary>` with
+// `-` for a None code (architecture.md section 7.0). All expectations are
+// C-oracle-verified raw codes with wrapper semantics applied.
+// ---------------------------------------------------------------------------
+
+#[test]
+fn cli_dmetaphone_binding_datapoints() {
+    // VAL-DM-003: mayer -> MR|-, fuzzy -> FS|-, missing word (empty) -> -|-.
+    let (status, stdout) = run_cli(b"dmetaphone 0 mayer\ndmetaphone 0 fuzzy\ndmetaphone 0\n");
+    assert!(status.success());
+    let lines = stdout_lines(&stdout);
+    assert_eq!(lines, vec!["MR|-", "FS|-", "-|-"]);
+}
+
+#[test]
+fn cli_dmetaphone_initial_letter_rules() {
+    // VAL-DM-004: GN/KN/PN/WR/PS skip, initial X -> S.
+    let (status, stdout) = run_cli(
+        b"dmetaphone 0 gnome\ndmetaphone 0 knee\ndmetaphone 0 pneumonia\ndmetaphone 0 write\ndmetaphone 0 psalm\ndmetaphone 0 xenon\n",
+    );
+    assert!(status.success());
+    let lines = stdout_lines(&stdout);
+    assert_eq!(
+        lines,
+        vec!["NM|-", "N|-", "NMN|-", "RT|-", "SLM|-", "SNN|-"]
+    );
+}
+
+#[test]
+fn cli_dmetaphone_cap_and_size_truncation() {
+    // VAL-DM-005: oracle-verified bcdfgh -> raw PKFK|PKFK (the Pierce-rule
+    // else swallows the D); size 0 unlimited, 1-3 truncate.
+    let (status, stdout) = run_cli(
+        b"dmetaphone 0 bcdfgh\ndmetaphone 3 bcdfgh\ndmetaphone 2 bcdfgh\ndmetaphone 1 mayer\ndmetaphone 2 mayer\n",
+    );
+    assert!(status.success());
+    let lines = stdout_lines(&stdout);
+    assert_eq!(lines, vec!["PKFK|-", "PKF|-", "PK|-", "M|-", "MR|-"]);
+}
+
+#[test]
+fn cli_dmetaphone_collapse_vs_distinct_secondary() {
+    // VAL-DM-006: equal codes collapse to `-`; czerny keeps its distinct
+    // secondary (CZ arm: primary S, secondary X).
+    let (status, stdout) = run_cli(b"dmetaphone 0 mayer\ndmetaphone 0 czerny\n");
+    assert!(status.success());
+    let lines = stdout_lines(&stdout);
+    assert_eq!(lines, vec!["MR|-", "SRN|XRN"]);
+}
+
+#[test]
+fn cli_dmetaphone_slavogermanic_arms() {
+    // VAL-DM-007: WITZ arm, final-W-after-vowel, GLI non-SlavoGermanic.
+    let (status, stdout) =
+        run_cli(b"dmetaphone 0 horowitz\ndmetaphone 0 arnow\ndmetaphone 0 tagliaro\n");
+    assert!(status.success());
+    let lines = stdout_lines(&stdout);
+    assert_eq!(lines, vec!["HRTS|HRFX", "ARN|ARNF", "TKLR|TLR"]);
+}
+
+#[test]
+fn cli_dmetaphone_structural_semantics() {
+    // VAL-DM-013 (OR-loop keeps secondary growing), VAL-DM-014 (padding
+    // lookahead), VAL-DM-015 (collapse before truncate), VAL-DM-016
+    // (distinct secondary truncation), VAL-DM-017 (default arm skips digits).
+    let (status, stdout) = run_cli(
+        b"dmetaphone 0 tagliarb\ndmetaphone 0 ach\ndmetaphone 1 bier\ndmetaphone 2 czerny\ndmetaphone 0 123\n",
+    );
+    assert!(status.success());
+    let lines = stdout_lines(&stdout);
+    assert_eq!(lines, vec!["TKLR|TLRP", "AK|-", "P|P", "SR|XR", "-|-"]);
+}
+
+#[test]
+fn cli_dmetaphone_non_ascii_line_errors_and_batch_continues() {
+    // VAL-DM-018: a non-ASCII dmetaphone line yields an ERROR line; the
+    // batch continues and the process still exits 0. Input written as raw
+    // UTF-8 bytes so console encoding cannot corrupt it.
+    let (status, stdout) = run_cli("dmetaphone 0 Jéroboam\ndmetaphone 0 mayer\n".as_bytes());
+    assert!(status.success());
+    let lines = stdout_lines(&stdout);
+    assert_eq!(lines.len(), 2, "one output line per input line");
+    assert!(lines[0].starts_with("ERROR "), "got: {:?}", lines[0]);
+    assert_eq!(lines[1], "MR|-");
+}
