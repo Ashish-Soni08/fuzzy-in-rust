@@ -1,0 +1,18 @@
+Differential Fuzz Survivor log - one continuous >=60s zero-divergence run
+=========================================================================
+
+Run timestamp (UTC): 2026-08-03T14:25:14+00:00
+Command line:        G:\AI\Projects\Github\Code-Resurrection\.venv\Scripts\python.exe fuzz\harness.py --algo dmetaphone --count 2400000
+                     (fuzz\harness.py forwards argv to the pinned engine tools\fuzz_diff.py; default --out = tools\reports)
+Sides compared:      Rust port (rust\target\debug\fuzzy-cli.exe, pinned batch stdin protocol)
+                     vs the compiled ORIGINAL C oracle (tools\oracle-c\dmoracle.exe, built from src\double_metaphone.c with MSVC cl.exe)
+
+Run fields (agree field-by-field with tools\reports\fuzz_dmetaphone_20260803_2400000.json):
+  algo           = dmetaphone
+  seed           = 20260803
+  cases          = 2400000
+  elapsed_s      = 75.312
+  mismatch_count = 0
+
+Result: one continuous differential campaign of 2400000 seeded cases; elapsed_s 75.312 (>= 60); zero divergences (mismatch_count = 0); engine exit code 0.
+Machine: Windows 11 (win32 10.0.19045), 8 GB RAM, PowerShell 5.1, Python 3.13.7 workspace venv, Rust 1.97.1 MSVC debug build; single serial run, no parallel jobs.

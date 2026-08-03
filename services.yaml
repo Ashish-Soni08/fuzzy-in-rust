@@ -50,6 +50,13 @@ commands:
   fuzz-nysiis: |
     & "G:\AI\Projects\Github\Code-Resurrection\.venv\Scripts\python.exe" tools\fuzz_diff.py --algo nysiis --count 50000
 
+  # fuzz/ campaign entry point: thin argv-forwarding wrapper over the pinned
+  # engine tools/fuzz_diff.py (exit code propagated). Any pinned fuzz_diff.py
+  # flags work; validators pass --out $env:TEMP\<dir> so runs never dirty the
+  # repo. The >=60s survivor campaign is documented in fuzz/log.txt.
+  fuzz-harness: |
+    & "G:\AI\Projects\Github\Code-Resurrection\.venv\Scripts\python.exe" fuzz\harness.py --algo dmetaphone --count 50000
+
   # PINNED documented-divergence run (bugs #14/#15 evidence): Rust (fixed) vs
   # ORIGINAL soundex semantics. Expected exit code NON-zero with
   # mismatch_count > 0 — the mismatches ARE the bug-fix evidence. Writes
