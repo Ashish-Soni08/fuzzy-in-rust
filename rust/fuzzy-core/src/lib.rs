@@ -8,8 +8,18 @@
 //! #14/#15 for Soundex). The original C/Cython sources under `src/` are the
 //! ground truth for everything else.
 //!
-//! Scaffold state: every algorithm entry point is an `unimplemented!()` stub;
-//! the ports land in the soundex-port / nysiis-port / dmetaphone-port features.
+//! # API
+//!
+//! - `soundex(size, s) -> String` — Soundex with the fixed #14/#15 semantics
+//!   (unicode-uppercase then A-Z filter; `size > 4` is a maximum, not a pad
+//!   target).
+//! - `nysiis(s) -> String` — exact NYSIIS port, quirks included.
+//! - `dmetaphone(s)` / `dmetaphone_with_size(size, s)` — Double Metaphone,
+//!   returning `Result<(Option<Vec<u8>>, Option<Vec<u8>>), NonAsciiError>`;
+//!   non-ASCII input is rejected (original behavior preserved).
+//! - `dmetaphone_bytes(input: &[u8]) -> (Vec<u8>, Vec<u8>)` — raw bytes-level
+//!   entry point (no ASCII validation, no None-collapse, no size truncation):
+//!   a faithful exposure of the C algorithm, including the Latin-1 arms.
 
 mod dmetaphone;
 mod nysiis;

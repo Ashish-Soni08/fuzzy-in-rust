@@ -38,7 +38,7 @@ tests/original/test_fuzzy.py::test_soundex_Test XPASS (issue #14)        [ 60%]
 tests/original/test_fuzzy.py::test_soundex_non_ascii XPASS (issue #15)   [ 80%]
 tests/original/test_fuzzy.py::test_DMetaphone PASSED                     [100%]
 
-======================== 2 passed, 3 xpassed in 0.07s =========================
+======================== 2 passed, 3 xpassed in 0.13s =========================
 ```
 
 **2 passed, 3 xpassed**, exit code 0. The three XPASS results are the two

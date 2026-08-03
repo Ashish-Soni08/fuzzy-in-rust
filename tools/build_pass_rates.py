@@ -100,7 +100,9 @@ ANSI_RE = re.compile(r"\x1b\[[0-9;]*m")
 
 
 def parse_pytest_output(text: str, source: str) -> dict:
-    # pytest colorizes when its config forces --color=yes; strip ANSI escapes so
+    # pytest emits ANSI color escapes even when piped/redirected on the
+    # validation machine (library/environment.md quirk #11; root cause
+    # unattributed -- pytest.ini does not force color). Strip ANSI escapes so
     # the banner/per-test parsing works for both live runs and captured files.
     text = ANSI_RE.sub("", text)
     collected_m = re.search(r"collected (\d+) items?", text)

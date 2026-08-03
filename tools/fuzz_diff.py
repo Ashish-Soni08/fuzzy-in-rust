@@ -38,7 +38,8 @@ schema:
     {algo, seed, cases, corpora{<category>: <count>}, mismatch_count,
      mismatches: [{input, expected, actual}], elapsed_s, timestamp}
 
-Exit code 0 iff mismatch_count == 0 (1 = mismatches, 2 = harness failure).
+Exit code 0 iff mismatch_count == 0; every failure mode (mismatches found or
+harness failure) exits 1 -- only 0-vs-non-zero is contractual.
 Deterministic: same seed + count reproduces the identical corpus prefix, so a
 smaller --count run with the same seed replays a prefix of a larger run.
 """

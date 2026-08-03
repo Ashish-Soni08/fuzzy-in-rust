@@ -1,0 +1,80 @@
+# Single source of truth for commands. All commands are PowerShell 5.1 and run from the
+# REPO ROOT (G:\AI\Projects\Github\Code-Resurrection\fuzzy-in-rust) unless they Set-Location themselves.
+# cargo is NOT on the default PATH — every cargo command below prefixes it. Do not "simplify" this away.
+# There are no long-running services and no ports in this mission.
+
+commands:
+  install: |
+    $env:PATH = "C:\Users\Lenovo\.cargo\bin;$env:PATH"; Set-Location rust; cargo fetch
+
+  build: |
+    $env:PATH = "C:\Users\Lenovo\.cargo\bin;$env:PATH"; Set-Location rust; cargo build --workspace
+
+  typecheck: |
+    $env:PATH = "C:\Users\Lenovo\.cargo\bin;$env:PATH"; Set-Location rust; cargo check --workspace --all-targets
+
+  test: |
+    $env:PATH = "C:\Users\Lenovo\.cargo\bin;$env:PATH"; Set-Location rust; cargo test --workspace
+
+  lint: |
+    $env:PATH = "C:\Users\Lenovo\.cargo\bin;$env:PATH"; Set-Location rust; cargo clippy --workspace --all-targets -- -D warnings
+
+  fmt-check: |
+    $env:PATH = "C:\Users\Lenovo\.cargo\bin;$env:PATH"; Set-Location rust; cargo fmt --all -- --check
+
+  test-original: |
+    & "G:\AI\Projects\Github\Code-Resurrection\.venv\Scripts\python.exe" -m pytest tests/original/ -v
+
+  verify-hashes: |
+    & "G:\AI\Projects\Github\Code-Resurrection\.venv\Scripts\python.exe" tools\verify_original_hashes.py
+
+  maturin-develop: |
+    $env:PATH = "C:\Users\Lenovo\.cargo\bin;$env:PATH"; $env:VIRTUAL_ENV = "G:\AI\Projects\Github\Code-Resurrection\.venv"; Set-Location rust\fuzzy-py; & "G:\AI\Projects\Github\Code-Resurrection\.venv\Scripts\maturin.exe" develop
+
+  build-oracle: |
+    PowerShell -ExecutionPolicy Bypass -File tools\oracle-c\build_oracle.ps1
+
+  # Differential spot-check: replays every word in tools/vectors/dmetaphone_vectors.json through
+  # the C oracle and fuzzy-cli (size 0), normalizing oracle raw codes with wrapper semantics
+  # (empty primary -> '-'; empty or equal secondary -> '-'). Requires rust\target\debug\fuzzy-cli.exe
+  # (run build first) and tools\oracle-c\dmoracle.exe (run build-oracle first). Exits 1 on any mismatch.
+  oracle-diff: |
+    $OutputEncoding = New-Object System.Text.UTF8Encoding($false); [Console]::OutputEncoding = New-Object System.Text.UTF8Encoding($false); $v = (Get-Content tools\vectors\dmetaphone_vectors.json -Raw | ConvertFrom-Json).vectors.word; $oracle = $v | & tools\oracle-c\dmoracle.exe; $cli = $v | ForEach-Object { "dmetaphone 0 $_" } | & rust\target\debug\fuzzy-cli.exe; $bad = 0; for ($i = 0; $i -lt $v.Count; $i++) { $parts = $oracle[$i] -split '\|'; $p = $parts[0]; $s = $parts[1]; if ($p -eq '') { $p = '-' }; if ($s -eq '' -or $s -eq $p) { $s = '-' }; $expect = "$p|$s"; if ($cli[$i] -ne $expect) { $bad++; "MISMATCH $($v[$i]): oracle=$expect cli=$($cli[$i])" } }; "oracle-diff: $($v.Count) words, $bad mismatches"; if ($bad -gt 0) { exit 1 }
+
+  fuzz-dmetaphone: |
+    & "G:\AI\Projects\Github\Code-Resurrection\.venv\Scripts\python.exe" tools\fuzz_diff.py --algo dmetaphone --count 50000
+
+  fuzz-soundex: |
+    & "G:\AI\Projects\Github\Code-Resurrection\.venv\Scripts\python.exe" tools\fuzz_diff.py --algo soundex --count 50000
+
+  fuzz-nysiis: |
+    & "G:\AI\Projects\Github\Code-Resurrection\.venv\Scripts\python.exe" tools\fuzz_diff.py --algo nysiis --count 50000
+
+  # PINNED documented-divergence run (bugs #14/#15 evidence): Rust (fixed) vs
+  # ORIGINAL soundex semantics. Expected exit code NON-zero with
+  # mismatch_count > 0 — the mismatches ARE the bug-fix evidence. Writes
+  # tools/reports/divergence_soundex_20260803_50000.json (committed).
+  fuzz-soundex-divergence: |
+    & "G:\AI\Projects\Github\Code-Resurrection\.venv\Scripts\python.exe" tools\fuzz_diff.py --algo soundex --mode original --count 50000
+
+  # Python oracle self-test: asserts every binding Soundex/NYSIIS data point.
+  oracle-py-selftest: |
+    & "G:\AI\Projects\Github\Code-Resurrection\.venv\Scripts\python.exe" tools\oracle_py.py --selftest
+
+  # Regenerates tools/reports/pass_rates.json from live runs (pytest, cargo test
+  # --workspace, divergence classification) + committed reports; fails loudly
+  # instead of writing an unverifiable number. Validators re-running for
+  # comparison MUST pass `--out $env:TEMP\<dir>` so validation never dirties
+  # the repo; ignore generated_at / repo_head_at_generation when comparing.
+  pass-rates: |
+    & "G:\AI\Projects\Github\Code-Resurrection\.venv\Scripts\python.exe" tools\build_pass_rates.py
+
+  # Ad-hoc fuzzy-cli invocation for manual spot checks (pipe pinned-protocol lines on stdin).
+  # Builds if needed; for unicode input set the BOM-less UTF-8 preamble first
+  # (library/environment.md quirk #10). The prebuilt exe rust\target\debug\fuzzy-cli.exe
+  # is also acceptable for ad-hoc checks once built.
+  cli-run: |
+    $env:PATH = "C:\Users\Lenovo\.cargo\bin;$env:PATH"; Set-Location rust; cargo run --quiet -p fuzzy-cli
+
+services: {}
+# No long-running services. Validation is CLI-only (cargo, pytest, python tooling).
