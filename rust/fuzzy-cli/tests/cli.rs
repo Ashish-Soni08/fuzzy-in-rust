@@ -124,3 +124,41 @@ fn cli_crlf_input_tolerated() {
         lines[0]
     );
 }
+
+// ---------------------------------------------------------------------------
+// soundex dispatch (soundex-port feature): real outputs through the exe.
+// ---------------------------------------------------------------------------
+
+#[test]
+fn cli_soundex_binding_datapoints() {
+    // architecture.md section 5.1 binding data points via the pinned line
+    // protocol. Input is written as raw UTF-8 bytes (Jéroboam), so console
+    // encoding cannot corrupt the non-ASCII case. A missing word token is
+    // the empty string (-> 0000).
+    let (status, stdout) =
+        run_cli("soundex 4 fuzzy\nsoundex 4 FancyFree\nsoundex 8 Test\nsoundex 8 Jéroboam\nsoundex 4\nsoundex 4 123\n".as_bytes());
+    assert!(status.success());
+    let lines = stdout_lines(&stdout);
+    assert_eq!(lines, vec!["F200", "F521", "T23", "J615", "0000", "0000"]);
+}
+
+#[test]
+fn cli_soundex_size_zero_prints_empty_line() {
+    let (status, stdout) = run_cli(b"soundex 0 anything\nsoundex 4 fuzzy\n");
+    assert!(status.success());
+    let lines = stdout_lines(&stdout);
+    assert_eq!(lines, vec!["", "F200"]);
+}
+
+#[test]
+fn cli_soundex_error_lines_do_not_abort_batch() {
+    // VAL-SDX-023: bad size and unknown algorithm yield ERROR lines; the
+    // batch continues and the process still exits 0.
+    let (status, stdout) = run_cli(b"soundex x fuzzy\nbogus 1 a\nsoundex 4 fuzzy\n");
+    assert!(status.success());
+    let lines = stdout_lines(&stdout);
+    assert_eq!(lines.len(), 3, "one output line per input line");
+    assert!(lines[0].starts_with("ERROR "), "got: {:?}", lines[0]);
+    assert!(lines[1].starts_with("ERROR "), "got: {:?}", lines[1]);
+    assert_eq!(lines[2], "F200");
+}
