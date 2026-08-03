@@ -612,3 +612,139 @@ fn dmetaphone_sch_initial_raw() {
     // primary X, secondary S.
     assert_eq!(dmetaphone_bytes(b"sch"), raw(b"X", b"S"));
 }
+
+// ---------------------------------------------------------------------------
+// Data-driven curated vectors (VAL-DM-010): every entry of
+// tools/vectors/dmetaphone_vectors.json is checked against the port. The
+// file holds ORACLE-RAW codes (empty string = empty code), each validated
+// against the C oracle when the file was curated; this test applies the
+// wrapper semantics (primary == secondary -> secondary None; empty -> None)
+// on top, exactly as the &str entry point does. Parsed with a minimal
+// std-only JSON extractor (no serde, per the zero-dependency rule).
+// ---------------------------------------------------------------------------
+
+/// One entry of the pinned vectors schema: `{"word","primary","secondary"}`.
+struct DmVector {
+    word: String,
+    primary: String,
+    secondary: String,
+}
+
+/// Parse a JSON string literal starting at `bytes[*i] == b'"'`, advancing
+/// `*i` past the closing quote. Handles the standard escapes; sufficient for
+/// the ASCII-only vectors file.
+fn parse_json_string(bytes: &[u8], i: &mut usize) -> String {
+    assert_eq!(bytes[*i], b'"', "expected string literal");
+    *i += 1;
+    let mut out = String::new();
+    while bytes[*i] != b'"' {
+        if bytes[*i] == b'\\' {
+            *i += 1;
+            match bytes[*i] {
+                b'n' => out.push('\n'),
+                b't' => out.push('\t'),
+                b'r' => out.push('\r'),
+                b'u' => {
+                    let hex =
+                        std::str::from_utf8(&bytes[*i + 1..*i + 5]).expect("valid \\u escape");
+                    let code = u32::from_str_radix(hex, 16).expect("valid \\u hex");
+                    out.push(char::from_u32(code).expect("valid unicode scalar"));
+                    *i += 4;
+                }
+                other => out.push(other as char),
+            }
+        } else {
+            out.push(bytes[*i] as char);
+        }
+        *i += 1;
+    }
+    *i += 1;
+    out
+}
+
+/// Skip JSON insignificant whitespace.
+fn skip_ws(bytes: &[u8], i: &mut usize) {
+    while *i < bytes.len() && matches!(bytes[*i], b' ' | b'\t' | b'\r' | b'\n') {
+        *i += 1;
+    }
+}
+
+/// Extract every `{"word","primary","secondary"}` triple from the pinned
+/// vectors file. Scans for `"key" : "string-value"` pairs; `word` starts a
+/// new vector, `primary`/`secondary` attach to the most recent one. Keys
+/// inside `_meta` are ignored because they never match these three names.
+fn load_vectors() -> Vec<DmVector> {
+    let text = include_str!("../../../tools/vectors/dmetaphone_vectors.json");
+    let bytes = text.as_bytes();
+    let mut vectors: Vec<DmVector> = Vec::new();
+    let mut i = 0;
+    while i < bytes.len() {
+        if bytes[i] != b'"' {
+            i += 1;
+            continue;
+        }
+        let mut j = i;
+        let key = parse_json_string(bytes, &mut j);
+        skip_ws(bytes, &mut j);
+        if j < bytes.len() && bytes[j] == b':' {
+            j += 1;
+            skip_ws(bytes, &mut j);
+            if j < bytes.len() && bytes[j] == b'"' {
+                let value = parse_json_string(bytes, &mut j);
+                match key.as_str() {
+                    "word" => vectors.push(DmVector {
+                        word: value,
+                        primary: String::new(),
+                        secondary: String::new(),
+                    }),
+                    "primary" => {
+                        if let Some(v) = vectors.last_mut() {
+                            v.primary = value;
+                        }
+                    }
+                    "secondary" => {
+                        if let Some(v) = vectors.last_mut() {
+                            v.secondary = value;
+                        }
+                    }
+                    _ => {}
+                }
+            }
+        }
+        i = j;
+    }
+    vectors
+}
+
+#[test]
+fn dmetaphone_vectors_file_matches_port() {
+    let vectors = load_vectors();
+    assert!(
+        vectors.len() >= 50,
+        "pinned schema requires >= 50 curated vectors, parsed {}",
+        vectors.len()
+    );
+    for v in &vectors {
+        // Wrapper semantics (architecture.md section 5.3 / RULEBOOK 6.3):
+        // primary == secondary collapses the secondary to None; an empty
+        // code becomes None. The file holds oracle-RAW codes.
+        let expected_primary = if v.primary.is_empty() {
+            None
+        } else {
+            Some(v.primary.as_bytes().to_vec())
+        };
+        let expected_secondary = if v.secondary == v.primary || v.secondary.is_empty() {
+            None
+        } else {
+            Some(v.secondary.as_bytes().to_vec())
+        };
+        assert_eq!(
+            dmetaphone(&v.word),
+            Ok((expected_primary, expected_secondary)),
+            "vector mismatch for word {:?} (oracle-raw {}|{})",
+            v.word,
+            v.primary,
+            v.secondary
+        );
+    }
+}

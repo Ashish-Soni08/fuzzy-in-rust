@@ -1,0 +1,575 @@
+{
+  "_meta": {
+    "source": "Curated from published Double Metaphone references: (1) words cited in the comments of the original src/double_metaphone.c (caesar, chianti, michael, chemistry, chorus, chore, architect, arch, orchestra, orchid, wachtler, wechsler, tichner, mchugh, mcclellan, czerny, focaccia, bellocchio, bacchus, accident, accede, succeed, bacci, bertucci, edge, edgar, ghislane, ghiradelli, hugh, bough, broughton, laugh, mclaughlin, cough, gough, rough, tough, cagney, tagliaro, biaggi, jose, jacinto, bajador, cabrillo, gallegos, dumb, thumb, rogier, hochmeier, island, isle, carlisle, carlysle, smith, schmidt, snider, schneider, school, schooner, schermerhorn, schenker, resnais, artois, thomas, thames, filipowicz, breaux, zhao, xavier, wasserman, arnow, uomo, womo, ...); (2) the original fuzzy test suite / README data points (mayer, fuzzy, and the empty string); (3) Lawrence Philips' Dr. Dobb's C/C++ Users Journal article (June 2000) example pairs (smith/schmidt/smyth, wasserman/vasserman, arnow/arnoff, uomo/womo, nowak/novak, czerny/zerny); (4) widely mirrored published vector sets of the Apache Commons Codec DoubleMetaphoneTest / Perl Text::DoubleMetaphone family (schulz, schwartz, schweitzer, zachary, katherine, catherine, andrews, powell, jackson, horowitz, witz).",
+    "validated_against": "oracle-c",
+    "created": "2026-08-03",
+    "notes": "Every vector was replayed through the C oracle (tools/oracle-c/dmoracle.exe, compiled from the ORIGINAL src/double_metaphone.c with cl.exe) on 2026-08-03: 113 candidates, 113 kept, 4 corrected to the oracle's output (oracle wins), 0 dropped. primary/secondary hold ORACLE-RAW codes (empty string = empty code); consumers apply wrapper semantics on top (primary == secondary -> secondary None; empty code -> None). Vector words are ASCII-only single tokens: Latin-1 byte arms are covered by native latin1 tests via dmetaphone_bytes, and whitespace-in-word by native tests (PowerShell pipes cannot transport raw Latin-1 bytes faithfully)."
+  },
+  "vectors": [
+    {
+      "word": "",
+      "primary": "",
+      "secondary": ""
+    },
+    {
+      "word": "mayer",
+      "primary": "MR",
+      "secondary": "MR"
+    },
+    {
+      "word": "fuzzy",
+      "primary": "FS",
+      "secondary": "FS"
+    },
+    {
+      "word": "gnome",
+      "primary": "NM",
+      "secondary": "NM"
+    },
+    {
+      "word": "knee",
+      "primary": "N",
+      "secondary": "N"
+    },
+    {
+      "word": "pneumonia",
+      "primary": "NMN",
+      "secondary": "NMN"
+    },
+    {
+      "word": "write",
+      "primary": "RT",
+      "secondary": "RT"
+    },
+    {
+      "word": "psalm",
+      "primary": "SLM",
+      "secondary": "SLM"
+    },
+    {
+      "word": "xenon",
+      "primary": "SNN",
+      "secondary": "SNN"
+    },
+    {
+      "word": "xavier",
+      "primary": "SF",
+      "secondary": "SFR"
+    },
+    {
+      "word": "x",
+      "primary": "S",
+      "secondary": "S"
+    },
+    {
+      "word": "caesar",
+      "primary": "SSR",
+      "secondary": "SSR"
+    },
+    {
+      "word": "chianti",
+      "primary": "KNT",
+      "secondary": "KNT"
+    },
+    {
+      "word": "michael",
+      "primary": "MKL",
+      "secondary": "MXL"
+    },
+    {
+      "word": "chemistry",
+      "primary": "KMST",
+      "secondary": "KMST"
+    },
+    {
+      "word": "chorus",
+      "primary": "KRS",
+      "secondary": "KRS"
+    },
+    {
+      "word": "chore",
+      "primary": "XR",
+      "secondary": "XR"
+    },
+    {
+      "word": "architect",
+      "primary": "ARKT",
+      "secondary": "ARKT"
+    },
+    {
+      "word": "arch",
+      "primary": "ARX",
+      "secondary": "ARK"
+    },
+    {
+      "word": "orchestra",
+      "primary": "ARKS",
+      "secondary": "ARKS"
+    },
+    {
+      "word": "orchid",
+      "primary": "ARKT",
+      "secondary": "ARKT"
+    },
+    {
+      "word": "wachtler",
+      "primary": "AKTL",
+      "secondary": "FKTL"
+    },
+    {
+      "word": "wechsler",
+      "primary": "AKSL",
+      "secondary": "FKSL"
+    },
+    {
+      "word": "tichner",
+      "primary": "TXNR",
+      "secondary": "TKNR"
+    },
+    {
+      "word": "mchugh",
+      "primary": "MK",
+      "secondary": "MK"
+    },
+    {
+      "word": "czerny",
+      "primary": "SRN",
+      "secondary": "XRN"
+    },
+    {
+      "word": "focaccia",
+      "primary": "FKX",
+      "secondary": "FKX"
+    },
+    {
+      "word": "bellocchio",
+      "primary": "PLX",
+      "secondary": "PLX"
+    },
+    {
+      "word": "bacchus",
+      "primary": "PKS",
+      "secondary": "PKS"
+    },
+    {
+      "word": "accident",
+      "primary": "AKST",
+      "secondary": "AKST"
+    },
+    {
+      "word": "accede",
+      "primary": "AKST",
+      "secondary": "AKST"
+    },
+    {
+      "word": "succeed",
+      "primary": "SKST",
+      "secondary": "SKST"
+    },
+    {
+      "word": "bacci",
+      "primary": "PX",
+      "secondary": "PX"
+    },
+    {
+      "word": "bertucci",
+      "primary": "PRTX",
+      "secondary": "PRTX"
+    },
+    {
+      "word": "mcclellan",
+      "primary": "MKLL",
+      "secondary": "MKLL"
+    },
+    {
+      "word": "edge",
+      "primary": "AJ",
+      "secondary": "AJ"
+    },
+    {
+      "word": "edgar",
+      "primary": "ATKR",
+      "secondary": "ATKR"
+    },
+    {
+      "word": "danger",
+      "primary": "TNJR",
+      "secondary": "TNKR"
+    },
+    {
+      "word": "ghislane",
+      "primary": "JLN",
+      "secondary": "JLN"
+    },
+    {
+      "word": "ghiradelli",
+      "primary": "JRTL",
+      "secondary": "JRTL"
+    },
+    {
+      "word": "hugh",
+      "primary": "H",
+      "secondary": "H"
+    },
+    {
+      "word": "bough",
+      "primary": "P",
+      "secondary": "P"
+    },
+    {
+      "word": "broughton",
+      "primary": "PRTN",
+      "secondary": "PRTN"
+    },
+    {
+      "word": "laugh",
+      "primary": "LF",
+      "secondary": "LF"
+    },
+    {
+      "word": "mclaughlin",
+      "primary": "MKFL",
+      "secondary": "MKFL"
+    },
+    {
+      "word": "cough",
+      "primary": "KF",
+      "secondary": "KF"
+    },
+    {
+      "word": "gough",
+      "primary": "KF",
+      "secondary": "KF"
+    },
+    {
+      "word": "rough",
+      "primary": "RF",
+      "secondary": "RF"
+    },
+    {
+      "word": "tough",
+      "primary": "TF",
+      "secondary": "TF"
+    },
+    {
+      "word": "cagney",
+      "primary": "KKN",
+      "secondary": "KKN"
+    },
+    {
+      "word": "agnes",
+      "primary": "AKNS",
+      "secondary": "ANS"
+    },
+    {
+      "word": "tagliaro",
+      "primary": "TKLR",
+      "secondary": "TLR"
+    },
+    {
+      "word": "biaggi",
+      "primary": "PJ",
+      "secondary": "PK"
+    },
+    {
+      "word": "giuseppe",
+      "primary": "JSP",
+      "secondary": "KSP"
+    },
+    {
+      "word": "jose",
+      "primary": "HS",
+      "secondary": "HS"
+    },
+    {
+      "word": "jacinto",
+      "primary": "JKNT",
+      "secondary": "AKNT"
+    },
+    {
+      "word": "bajador",
+      "primary": "PJTR",
+      "secondary": "PHTR"
+    },
+    {
+      "word": "cabrillo",
+      "primary": "KPRL",
+      "secondary": "KPR"
+    },
+    {
+      "word": "gallegos",
+      "primary": "KLKS",
+      "secondary": "KKS"
+    },
+    {
+      "word": "dumb",
+      "primary": "TM",
+      "secondary": "TM"
+    },
+    {
+      "word": "thumb",
+      "primary": "0M",
+      "secondary": "TM"
+    },
+    {
+      "word": "rogier",
+      "primary": "RJ",
+      "secondary": "RJR"
+    },
+    {
+      "word": "hochmeier",
+      "primary": "HKMR",
+      "secondary": "HKMR"
+    },
+    {
+      "word": "island",
+      "primary": "ALNT",
+      "secondary": "ALNT"
+    },
+    {
+      "word": "isle",
+      "primary": "AL",
+      "secondary": "AL"
+    },
+    {
+      "word": "carlisle",
+      "primary": "KRLL",
+      "secondary": "KRLL"
+    },
+    {
+      "word": "carlysle",
+      "primary": "KRLL",
+      "secondary": "KRLL"
+    },
+    {
+      "word": "sugar",
+      "primary": "XKR",
+      "secondary": "SKR"
+    },
+    {
+      "word": "smith",
+      "primary": "SM0",
+      "secondary": "XMT"
+    },
+    {
+      "word": "schmidt",
+      "primary": "XMT",
+      "secondary": "SMT"
+    },
+    {
+      "word": "snider",
+      "primary": "SNTR",
+      "secondary": "XNTR"
+    },
+    {
+      "word": "schneider",
+      "primary": "XNTR",
+      "secondary": "SNTR"
+    },
+    {
+      "word": "school",
+      "primary": "SKL",
+      "secondary": "SKL"
+    },
+    {
+      "word": "schooner",
+      "primary": "SKNR",
+      "secondary": "SKNR"
+    },
+    {
+      "word": "schermerhorn",
+      "primary": "XRMR",
+      "secondary": "SKRM"
+    },
+    {
+      "word": "schenker",
+      "primary": "XNKR",
+      "secondary": "SKNK"
+    },
+    {
+      "word": "resnais",
+      "primary": "RSN",
+      "secondary": "RSNS"
+    },
+    {
+      "word": "artois",
+      "primary": "ART",
+      "secondary": "ARTS"
+    },
+    {
+      "word": "science",
+      "primary": "SKNK",
+      "secondary": "SKNK"
+    },
+    {
+      "word": "scene",
+      "primary": "SKN",
+      "secondary": "SKN"
+    },
+    {
+      "word": "thomas",
+      "primary": "TMS",
+      "secondary": "TMS"
+    },
+    {
+      "word": "thames",
+      "primary": "TMS",
+      "secondary": "TMS"
+    },
+    {
+      "word": "nation",
+      "primary": "NXN",
+      "secondary": "NXN"
+    },
+    {
+      "word": "dutch",
+      "primary": "TX",
+      "secondary": "TX"
+    },
+    {
+      "word": "wasserman",
+      "primary": "ASRM",
+      "secondary": "FSRM"
+    },
+    {
+      "word": "arnow",
+      "primary": "ARN",
+      "secondary": "ARNF"
+    },
+    {
+      "word": "filipowicz",
+      "primary": "FLPT",
+      "secondary": "FLPF"
+    },
+    {
+      "word": "horowitz",
+      "primary": "HRTS",
+      "secondary": "HRFX"
+    },
+    {
+      "word": "witz",
+      "primary": "ATS",
+      "secondary": "FFX"
+    },
+    {
+      "word": "breaux",
+      "primary": "PR",
+      "secondary": "PR"
+    },
+    {
+      "word": "zhao",
+      "primary": "J",
+      "secondary": "J"
+    },
+    {
+      "word": "pizza",
+      "primary": "PS",
+      "secondary": "PTS"
+    },
+    {
+      "word": "schwarz",
+      "primary": "XRS",
+      "secondary": "XFRT"
+    },
+    {
+      "word": "aachen",
+      "primary": "AXN",
+      "secondary": "AKN"
+    },
+    {
+      "word": "knight",
+      "primary": "NT",
+      "secondary": "NT"
+    },
+    {
+      "word": "gnocchi",
+      "primary": "NX",
+      "secondary": "NX"
+    },
+    {
+      "word": "jackson",
+      "primary": "JKSN",
+      "secondary": "AKSN"
+    },
+    {
+      "word": "smyth",
+      "primary": "SM0",
+      "secondary": "XMT"
+    },
+    {
+      "word": "vasserman",
+      "primary": "FSRM",
+      "secondary": "FSRM"
+    },
+    {
+      "word": "arnoff",
+      "primary": "ARNF",
+      "secondary": "ARNF"
+    },
+    {
+      "word": "uomo",
+      "primary": "AM",
+      "secondary": "AM"
+    },
+    {
+      "word": "womo",
+      "primary": "AM",
+      "secondary": "FM"
+    },
+    {
+      "word": "nowak",
+      "primary": "NK",
+      "secondary": "NK"
+    },
+    {
+      "word": "novak",
+      "primary": "NFK",
+      "secondary": "NFK"
+    },
+    {
+      "word": "zerny",
+      "primary": "SRN",
+      "secondary": "SRN"
+    },
+    {
+      "word": "schulz",
+      "primary": "XLS",
+      "secondary": "XLS"
+    },
+    {
+      "word": "schwartz",
+      "primary": "XRTS",
+      "secondary": "XFRT"
+    },
+    {
+      "word": "schweitzer",
+      "primary": "XTSR",
+      "secondary": "XFTS"
+    },
+    {
+      "word": "zachary",
+      "primary": "SKR",
+      "secondary": "SKR"
+    },
+    {
+      "word": "katherine",
+      "primary": "K0RN",
+      "secondary": "KTRN"
+    },
+    {
+      "word": "catherine",
+      "primary": "K0RN",
+      "secondary": "KTRN"
+    },
+    {
+      "word": "andrews",
+      "primary": "ANTR",
+      "secondary": "ANTR"
+    },
+    {
+      "word": "powell",
+      "primary": "PL",
+      "secondary": "PL"
+    }
+  ]
+}
