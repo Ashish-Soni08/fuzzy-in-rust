@@ -1,0 +1,21 @@
+{
+  "algo": "soundex",
+  "seed": 20260803,
+  "cases": 50000,
+  "corpora": {
+    "empty": 502,
+    "single_char": 1513,
+    "ascii_words": 21272,
+    "name_like": 12690,
+    "mixed_case": 6243,
+    "digits_punct": 4140,
+    "unicode": 2582,
+    "very_long": 1058
+  },
+  "mismatch_count": 0,
+  "mismatches": [],
+  "elapsed_s": 0.966,
+  "timestamp": "2026-08-03T08:35:13+00:00",
+  "mode": "fixed",
+  "selftest": false
+}

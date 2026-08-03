@@ -1,0 +1,522 @@
+{
+  "algo": "soundex",
+  "seed": 20260803,
+  "cases": 50000,
+  "corpora": {
+    "empty": 502,
+    "single_char": 1513,
+    "ascii_words": 21272,
+    "name_like": 12690,
+    "mixed_case": 6243,
+    "digits_punct": 4140,
+    "unicode": 2582,
+    "very_long": 1058
+  },
+  "mismatch_count": 14187,
+  "mismatches": [
+    {
+      "input": "soundex 8 p",
+      "expected": "P0000000",
+      "actual": "P"
+    },
+    {
+      "input": "soundex 100 jutjixzhbfpj",
+      "expected": "J321200000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000",
+      "actual": "J3212"
+    },
+    {
+      "input": "soundex 100 wBVNGdXZwBIi",
+      "expected": "W152321000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000",
+      "actual": "W152321"
+    },
+    {
+      "input": "soundex 8 eow.rfjjc3bm7",
+      "expected": "E6121500",
+      "actual": "E61215"
+    },
+    {
+      "input": "soundex 3 \u00dcnmu",
+      "expected": "ERROR non-ASCII input: original Soundex raises UnicodeEncodeError (upstream bug #15)",
+      "actual": "N50"
+    },
+    {
+      "input": "soundex 8 qcQyFZu",
+      "expected": "Q2120000",
+      "actual": "Q212"
+    },
+    {
+      "input": "soundex 8 cg.",
+      "expected": "C2000000",
+      "actual": "C2"
+    },
+    {
+      "input": "soundex 8 leqo",
+      "expected": "L2000000",
+      "actual": "L2"
+    },
+    {
+      "input": "soundex 100 wyqllgxc",
+      "expected": "W242000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000",
+      "actual": "W242"
+    },
+    {
+      "input": "soundex 8 A",
+      "expected": "A0000000",
+      "actual": "A"
+    },
+    {
+      "input": "soundex 8 Geirsstue",
+      "expected": "G6230000",
+      "actual": "G623"
+    },
+    {
+      "input": "soundex 5 uixyoxfq",
+      "expected": "U2120",
+      "actual": "U212"
+    },
+    {
+      "input": "soundex 100 refvxzu",
+      "expected": "R120000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000",
+      "actual": "R12"
+    },
+    {
+      "input": "soundex 100 l",
+      "expected": "L000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000",
+      "actual": "L"
+    },
+    {
+      "input": "soundex 100 fsyvrh",
+      "expected": "F216000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000",
+      "actual": "F216"
+    },
+    {
+      "input": "soundex 3 c\u0179wfje",
+      "expected": "ERROR non-ASCII input: original Soundex raises UnicodeEncodeError (upstream bug #15)",
+      "actual": "C12"
+    },
+    {
+      "input": "soundex 100 Schae",
+      "expected": "S200000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000",
+      "actual": "S2"
+    },
+    {
+      "input": "soundex 100 'h!",
+      "expected": "H000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000",
+      "actual": "H"
+    },
+    {
+      "input": "soundex 100 lkxw\u00e6qx\u00cfptcp",
+      "expected": "ERROR non-ASCII input: original Soundex raises UnicodeEncodeError (upstream bug #15)",
+      "actual": "L21321"
+    },
+    {
+      "input": "soundex 100 cw",
+      "expected": "C000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000",
+      "actual": "C"
+    },
+    {
+      "input": "soundex 5 Gu\u00f0mundur",
+      "expected": "ERROR non-ASCII input: original Soundex raises UnicodeEncodeError (upstream bug #15)",
+      "actual": "G536"
+    },
+    {
+      "input": "soundex 100 iqvaikih",
+      "expected": "I212000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000",
+      "actual": "I212"
+    },
+    {
+      "input": "soundex 5 Tzyhae",
+      "expected": "T2000",
+      "actual": "T2"
+    },
+    {
+      "input": "soundex 8 xuxnwpt",
+      "expected": "X2513000",
+      "actual": "X2513"
+    },
+    {
+      "input": "soundex 8 w'hpt3gn",
+      "expected": "W1325000",
+      "actual": "W1325"
+    },
+    {
+      "input": "soundex 8 Peigny",
+      "expected": "P2500000",
+      "actual": "P25"
+    },
+    {
+      "input": "soundex 100 zwxbpkww",
+      "expected": "Z212000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000",
+      "actual": "Z212"
+    },
+    {
+      "input": "soundex 5 jouz",
+      "expected": "J2000",
+      "actual": "J2"
+    },
+    {
+      "input": "soundex 100 xy",
+      "expected": "X000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000",
+      "actual": "X"
+    },
+    {
+      "input": "soundex 5 Khiewicz",
+      "expected": "K2000",
+      "actual": "K2"
+    },
+    {
+      "input": "soundex 5 \u017b\u00f3\u0142\u0107",
+      "expected": "ERROR non-ASCII input: original Soundex raises UnicodeEncodeError (upstream bug #15)",
+      "actual": ""
+    },
+    {
+      "input": "soundex 5 Afr",
+      "expected": "A1600",
+      "actual": "A16"
+    },
+    {
+      "input": "soundex 8 aoos.bjgf",
+      "expected": "A2121000",
+      "actual": "A2121"
+    },
+    {
+      "input": "soundex 100 Cauhambrou",
+      "expected": "C516000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000",
+      "actual": "C516"
+    },
+    {
+      "input": "soundex 100 \u00e5m\u00cd\u016eedsny",
+      "expected": "ERROR non-ASCII input: original Soundex raises UnicodeEncodeError (upstream bug #15)",
+      "actual": "M325"
+    },
+    {
+      "input": "soundex 5 qg5h6,",
+      "expected": "Q2000",
+      "actual": "Q2"
+    },
+    {
+      "input": "soundex 100 Kno",
+      "expected": "K500000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000",
+      "actual": "K5"
+    },
+    {
+      "input": "soundex 100 navqdzdciei",
+      "expected": "N123232000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000",
+      "actual": "N123232"
+    },
+    {
+      "input": "soundex 100 afmcsh",
+      "expected": "A152000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000",
+      "actual": "A152"
+    },
+    {
+      "input": "soundex 100 wjoncn",
+      "expected": "W252500000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000",
+      "actual": "W2525"
+    },
+    {
+      "input": "soundex 8 1osj_1k_vw0kmt",
+      "expected": "O2125300",
+      "actual": "O21253"
+    },
+    {
+      "input": "soundex 8 Jaitsch",
+      "expected": "J3200000",
+      "actual": "J32"
+    },
+    {
+      "input": "soundex 5 zw",
+      "expected": "Z0000",
+      "actual": "Z"
+    },
+    {
+      "input": "soundex 100 wvmz",
+      "expected": "W152000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000",
+      "actual": "W152"
+    },
+    {
+      "input": "soundex 8 uzzmwybCYv",
+      "expected": "U2512100",
+      "actual": "U25121"
+    },
+    {
+      "input": "soundex 8 Derkhoa",
+      "expected": "D6200000",
+      "actual": "D62"
+    },
+    {
+      "input": "soundex 8 drhlttxxu",
+      "expected": "D6432000",
+      "actual": "D6432"
+    },
+    {
+      "input": "soundex 100 ugicdznjemqh",
+      "expected": "U232525200000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000",
+      "actual": "U2325252"
+    },
+    {
+      "input": "soundex 8 vayucmj",
+      "expected": "V2520000",
+      "actual": "V252"
+    },
+    {
+      "input": "soundex 100 nona",
+      "expected": "N500000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000",
+      "actual": "N5"
+    },
+    {
+      "input": "soundex 5 \u017cybgdpca",
+      "expected": "ERROR non-ASCII input: original Soundex raises UnicodeEncodeError (upstream bug #15)",
+      "actual": "Y1231"
+    },
+    {
+      "input": "soundex 8 Jos\u00e9",
+      "expected": "ERROR non-ASCII input: original Soundex raises UnicodeEncodeError (upstream bug #15)",
+      "actual": "J2"
+    },
+    {
+      "input": "soundex 8 crhmqwbw-chx",
+      "expected": "C6521200",
+      "actual": "C65212"
+    },
+    {
+      "input": "soundex 5 b",
+      "expected": "B0000",
+      "actual": "B"
+    },
+    {
+      "input": "soundex 8 odn",
+      "expected": "O3500000",
+      "actual": "O35"
+    },
+    {
+      "input": "soundex 100 jahiyevpv",
+      "expected": "J100000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000",
+      "actual": "J1"
+    },
+    {
+      "input": "soundex 8 jczcnvklse",
+      "expected": "J2512420",
+      "actual": "J251242"
+    },
+    {
+      "input": "soundex 100 kwydglyos",
+      "expected": "K324200000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000",
+      "actual": "K3242"
+    },
+    {
+      "input": "soundex 100 Boa",
+      "expected": "B000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000",
+      "actual": "B"
+    },
+    {
+      "input": "soundex 8 fnp",
+      "expected": "F5100000",
+      "actual": "F51"
+    },
+    {
+      "input": "soundex 100 hsbhmrvkje",
+      "expected": "H215612000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000",
+      "actual": "H215612"
+    },
+    {
+      "input": "soundex 100 5",
+      "expected": "0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000",
+      "actual": ""
+    },
+    {
+      "input": "soundex 5 OAuijHES",
+      "expected": "O2000",
+      "actual": "O2"
+    },
+    {
+      "input": "soundex 4 \u00e9\u00d4o\u00eef",
+      "expected": "ERROR non-ASCII input: original Soundex raises UnicodeEncodeError (upstream bug #15)",
+      "actual": "O100"
+    },
+    {
+      "input": "soundex 100 Stra\u00dfe",
+      "expected": "ERROR non-ASCII input: original Soundex raises UnicodeEncodeError (upstream bug #15)",
+      "actual": "S362"
+    },
+    {
+      "input": "soundex 100 rwpbszzlo",
+      "expected": "R124000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000",
+      "actual": "R124"
+    },
+    {
+      "input": "soundex 8 qwfb\u00f2\u00caosew",
+      "expected": "ERROR non-ASCII input: original Soundex raises UnicodeEncodeError (upstream bug #15)",
+      "actual": "Q12"
+    },
+    {
+      "input": "soundex 5 \u00d4\u00d1bvk",
+      "expected": "ERROR non-ASCII input: original Soundex raises UnicodeEncodeError (upstream bug #15)",
+      "actual": "B12"
+    },
+    {
+      "input": "soundex 8 gmnxmocw",
+      "expected": "G5252000",
+      "actual": "G5252"
+    },
+    {
+      "input": "soundex 100 gPVMQBmTcL",
+      "expected": "G152153240000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000",
+      "actual": "G15215324"
+    },
+    {
+      "input": "soundex 8 Choehamtrieham",
+      "expected": "C5365000",
+      "actual": "C5365"
+    },
+    {
+      "input": "soundex 4 N\u00fa\u00f1ez",
+      "expected": "ERROR non-ASCII input: original Soundex raises UnicodeEncodeError (upstream bug #15)",
+      "actual": "N200"
+    },
+    {
+      "input": "soundex 8 lxoidshni",
+      "expected": "L2325000",
+      "actual": "L2325"
+    },
+    {
+      "input": "soundex 4 wh\u00e8o\u00fazsdi\u00fa",
+      "expected": "ERROR non-ASCII input: original Soundex raises UnicodeEncodeError (upstream bug #15)",
+      "actual": "W230"
+    },
+    {
+      "input": "soundex 5 pKS",
+      "expected": "P2000",
+      "actual": "P2"
+    },
+    {
+      "input": "soundex 8 Froocrueford",
+      "expected": "F6261630",
+      "actual": "F626163"
+    },
+    {
+      "input": "soundex 100 tnlu",
+      "expected": "T540000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000",
+      "actual": "T54"
+    },
+    {
+      "input": "soundex 100 Trupraungloip",
+      "expected": "T616524100000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000",
+      "actual": "T6165241"
+    },
+    {
+      "input": "soundex 5 Ghea",
+      "expected": "G0000",
+      "actual": "G"
+    },
+    {
+      "input": "soundex 8 dldkyywama",
+      "expected": "D4325000",
+      "actual": "D4325"
+    },
+    {
+      "input": "soundex 100 zdqeuzbz",
+      "expected": "Z321200000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000",
+      "actual": "Z3212"
+    },
+    {
+      "input": "soundex 100 txmzabtos",
+      "expected": "T252132000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000",
+      "actual": "T252132"
+    },
+    {
+      "input": "soundex 8 kxvgktyngqg",
+      "expected": "K2123520",
+      "actual": "K212352"
+    },
+    {
+      "input": "soundex 3 bws\u00cdp\u00cb",
+      "expected": "ERROR non-ASCII input: original Soundex raises UnicodeEncodeError (upstream bug #15)",
+      "actual": "B21"
+    },
+    {
+      "input": "soundex 8 Wrean",
+      "expected": "W6500000",
+      "actual": "W65"
+    },
+    {
+      "input": "soundex 3 z\u017cqiwj",
+      "expected": "ERROR non-ASCII input: original Soundex raises UnicodeEncodeError (upstream bug #15)",
+      "actual": "Z20"
+    },
+    {
+      "input": "soundex 8 zytcfocury",
+      "expected": "Z3212600",
+      "actual": "Z32126"
+    },
+    {
+      "input": "soundex 8 erphmavq",
+      "expected": "E6151200",
+      "actual": "E61512"
+    },
+    {
+      "input": "soundex 5 Mcjazroe",
+      "expected": "M2600",
+      "actual": "M26"
+    },
+    {
+      "input": "soundex 5 Gu\u00f0mundur",
+      "expected": "ERROR non-ASCII input: original Soundex raises UnicodeEncodeError (upstream bug #15)",
+      "actual": "G536"
+    },
+    {
+      "input": "soundex 4 vzcx\u0153gr",
+      "expected": "ERROR non-ASCII input: original Soundex raises UnicodeEncodeError (upstream bug #15)",
+      "actual": "V260"
+    },
+    {
+      "input": "soundex 100 Coitoifesen",
+      "expected": "C312500000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000",
+      "actual": "C3125"
+    },
+    {
+      "input": "soundex 5 s\u017cnrypocr",
+      "expected": "ERROR non-ASCII input: original Soundex raises UnicodeEncodeError (upstream bug #15)",
+      "actual": "S5612"
+    },
+    {
+      "input": "soundex 8 \u00c5sa",
+      "expected": "ERROR non-ASCII input: original Soundex raises UnicodeEncodeError (upstream bug #15)",
+      "actual": "S"
+    },
+    {
+      "input": "soundex 5 lfsxhyhb",
+      "expected": "L1210",
+      "actual": "L121"
+    },
+    {
+      "input": "soundex 8 Gnoa",
+      "expected": "G5000000",
+      "actual": "G5"
+    },
+    {
+      "input": "soundex 100 hs",
+      "expected": "H200000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000",
+      "actual": "H2"
+    },
+    {
+      "input": "soundex 8 'ep-kcs'c@gi-",
+      "expected": "E1200000",
+      "actual": "E12"
+    },
+    {
+      "input": "soundex 8 umFizShTeiMD",
+      "expected": "U5123530",
+      "actual": "U512353"
+    },
+    {
+      "input": "soundex 4 Micha\u0142",
+      "expected": "ERROR non-ASCII input: original Soundex raises UnicodeEncodeError (upstream bug #15)",
+      "actual": "M200"
+    }
+  ],
+  "elapsed_s": 1.301,
+  "timestamp": "2026-08-03T08:35:32+00:00",
+  "mode": "original",
+  "selftest": false
+}
