@@ -37,7 +37,7 @@ installed `fuzzy` into):
 & G:\AI\Projects\Github\Code-Resurrection\.venv\Scripts\python.exe -m pytest tests/port -v
 ```
 
-Expected: all tests pass (12 passed).
+Expected: all tests pass (14 passed).
 
 ## The native Rust suites
 
