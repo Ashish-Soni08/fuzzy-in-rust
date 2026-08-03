@@ -1,0 +1,4 @@
+# The preserved original test suite is pinned by SHA-256 (see tests/original/KICKOFF.md).
+# Disable all line-ending/text normalization so the file stays byte-identical
+# in the index, in the committed blob, and on every checkout (any platform).
+tests/original/test_fuzzy.py -text
