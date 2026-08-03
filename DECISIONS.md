@@ -221,7 +221,10 @@ sanctioned bug-fix classes above, and nowhere else. This is not asserted; it is
 measured. The committed divergence report
 `tools/reports/divergence_soundex_20260803_50000.json` fuzzes the fixed Rust
 port against **original** Soundex semantics (same seed `20260803`, same 50,000
-cases as the leg-3 campaign):
+cases as the leg-3 campaign) and records the authoritative divergent-case
+total; the per-class split below is aggregated in
+[`tools/reports/pass_rates.json`](tools/reports/pass_rates.json)
+(`divergence_summary.by_sanctioned_class`):
 
 - **14,187** divergent cases out of 50,000, and **every one** falls into a
   sanctioned class:

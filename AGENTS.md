@@ -70,10 +70,11 @@ scale. We did that with ground truth, not intuition:
 
 The playbook's queue — small, mechanical, independently verifiable units that
 any worker can pick up and resume — was literal here. The mission's
-`features.json` decomposed the port into 16 implementation features across four
+`features.json` decomposed the port into 18 implementation features across four
 milestones (`foundation`, `dmetaphone`, `parity`, `submission`), each with a
 typed worker (`rust-core-worker`, `tooling-worker`, `integration-worker`,
-`docs-worker`), explicit preconditions, and the contract assertions it fulfills.
+`docs-worker`), explicit preconditions, and the contract assertions it fulfills
+— plus 8 auto-injected milestone validator features, 26 features in total.
 Any feature could be re-run or resumed from committed state; the seeded fuzz
 generator (seed `20260803`) makes even the 50,000-case campaigns deterministic
 and resumable — a validator re-running with the same seed reproduces the
@@ -215,7 +216,7 @@ so, and the evidence includes the failures-that-are-features.
 | Differential fuzz vs ground truth | **150,000 cases, 0 mismatches** (`tools/reports/fuzz_*_20260803_50000.json`) |
 | Intentional divergences, honestly counted | **14,187**, all in bug-fix classes #14/#15, 0 unclassified |
 | Safe Rust | `#![forbid(unsafe_code)]` in fuzzy-core/fuzzy-cli; no handwritten unsafe in fuzzy-py; clippy `-D warnings` + rustfmt clean |
-| Process | 16 features, 4 milestones, 126 contract assertions, commit+push per feature |
+| Process | 18 implementation features (+8 auto-injected validators = 26 total), 4 milestones, 126 contract assertions, commit+push per feature |
 
 ## Pointers
 
