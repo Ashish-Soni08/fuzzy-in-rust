@@ -1,0 +1,21 @@
+# Port Mortem 2026 — Code Resurrection Hackathon submission metadata
+# Track D: Python -> Rust port of the `fuzzy` phonetic-algorithms library.
+
+[submission]
+track = "D"
+event = "Port Mortem 2026"
+
+[source]
+# Upstream repository that was ported.
+source_url = "https://github.com/yougov/fuzzy"
+# Upstream base commit the port was made from.
+source_commit = "e15b195467223a684a26fadb53997bf6f36be2c4"
+# Public fork containing the port (this repository).
+fork_url = "https://github.com/Ashish-Soni08/fuzzy-in-rust"
+
+[kickoff]
+# SHA-256 of tests/original/test_fuzzy.py, pinned at kickoff (2026-07-31T18:00:00Z).
+# Re-verify at any time with: python tools/verify_original_hashes.py
+kickoff_hash = "6DD19F9A38F848001D990CCB3745213A60EFBB36A11293642F1B3BDBD5510AE5"
+kickoff_time_utc = "2026-07-31T18:00:00Z"
+code_freeze_utc = "2026-08-03T18:00:00Z"
