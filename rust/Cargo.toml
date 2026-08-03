@@ -1,0 +1,3 @@
+[workspace]
+members = ["fuzzy-core", "fuzzy-cli"]
+resolver = "2"

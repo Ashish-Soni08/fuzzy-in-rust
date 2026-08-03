@@ -1,0 +1,9 @@
+[package]
+name = "fuzzy-core"
+version = "0.1.0"
+edition = "2021"
+description = "Safe-Rust port of the `fuzzy` phonetic algorithms (Soundex, NYSIIS, Double Metaphone)"
+license = "MIT"
+
+# std-only by mission rule (architecture.md section 4, VAL-REPO-013): no external crates.
+[dependencies]

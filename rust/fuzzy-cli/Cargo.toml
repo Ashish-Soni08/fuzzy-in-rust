@@ -1,0 +1,11 @@
+[package]
+name = "fuzzy-cli"
+version = "0.1.0"
+edition = "2021"
+description = "Batch line-protocol CLI over the fuzzy-core port (fuzz harness + demo interface)"
+license = "MIT"
+
+# std-only by mission rule (architecture.md section 4, VAL-REPO-013): no external crates.
+# fuzzy-core is source-included via #[path] in src/main.rs instead of a Cargo
+# dependency so that this [dependencies] section stays empty as the contract pins.
+[dependencies]
