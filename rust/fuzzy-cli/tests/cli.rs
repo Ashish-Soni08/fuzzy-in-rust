@@ -162,3 +162,30 @@ fn cli_soundex_error_lines_do_not_abort_batch() {
     assert!(lines[1].starts_with("ERROR "), "got: {:?}", lines[1]);
     assert_eq!(lines[2], "F200");
 }
+
+// ---------------------------------------------------------------------------
+// nysiis dispatch (nysiis-port feature): real outputs through the exe.
+// ---------------------------------------------------------------------------
+
+#[test]
+fn cli_nysiis_binding_datapoints() {
+    // architecture.md section 5.2 binding data points via the pinned line
+    // protocol. A missing word token is the empty string; digits strip to
+    // empty. Both empty results print as empty lines.
+    let (status, stdout) = run_cli(b"nysiis fuzzy\nnysiis\nnysiis 123\n");
+    assert!(status.success());
+    let lines = stdout_lines(&stdout);
+    assert_eq!(lines, vec!["FASY", "", ""]);
+}
+
+#[test]
+fn cli_nysiis_quirk_cases() {
+    // ß -> SS survives the A-Z filter (written as raw UTF-8 bytes so console
+    // encoding cannot corrupt it); MAC/PF prefixes; the all-vowels
+    // trailing-trim quirk prints an empty line.
+    let (status, stdout) =
+        run_cli("nysiis Straße\nnysiis MACBETH\nnysiis PFISTER\nnysiis AEIOU\n".as_bytes());
+    assert!(status.success());
+    let lines = stdout_lines(&stdout);
+    assert_eq!(lines, vec!["STRAS", "MCBATH", "FASTAR", ""]);
+}
