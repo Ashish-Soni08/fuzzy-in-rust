@@ -1,0 +1,182 @@
+{
+  "_meta": {
+    "purpose": "Honest pass-rate numbers for the fuzzy Python->Rust port; the single source DECISIONS.md quotes.",
+    "generated_by": "tools/build_pass_rates.py",
+    "regenerate": "python tools/build_pass_rates.py (venv python, from the repo root)",
+    "generated_at": "2026-08-03T08:43:17+00:00",
+    "repo_head_at_generation": "7da9260e111d5e88ff8830000ca75d91d1a4f803",
+    "honesty_rule": "Every number comes from an actual command run or a committed report; the generator fails loudly instead of writing an unverifiable number. generated_at / repo_head_at_generation / elapsed_s / timestamp fields are informational; all counts are deterministic."
+  },
+  "original_suite": {
+    "source": "tools/reports/original_suite_output.txt",
+    "command": "python -m pytest tests/original/ -v (venv python; services.yaml: test-original)",
+    "collected": 5,
+    "passed": 2,
+    "xpassed": 3,
+    "xfailed": 0,
+    "failed": 0,
+    "errors": 0,
+    "exit_code": 0,
+    "per_test": {
+      "test_soundex_does_not_mutate_strings": "PASSED",
+      "test_soundex_result": "XPASS",
+      "test_soundex_Test": "XPASS",
+      "test_soundex_non_ascii": "XPASS",
+      "test_DMetaphone": "PASSED"
+    },
+    "summary_line": "2 passed, 3 xpassed in 0.07s",
+    "note": "The 3 xpassed tests are the intentional bug fixes #14/#15: the original suite marks them non-strict xfail, and the port implements the behavior the tests intend, so they XPASS. Verified against a live re-run at generation time (identical counts, exit 0)."
+  },
+  "native_tests": {
+    "command": "cargo test --workspace (from rust/; services.yaml: test)",
+    "crates": {
+      "fuzzy-cli": {
+        "targets": {
+          "unit (src/main.rs)": {
+            "passed": 0,
+            "failed": 0
+          },
+          "integration (tests/cli.rs)": {
+            "passed": 20,
+            "failed": 0
+          }
+        },
+        "passed": 20,
+        "failed": 0
+      },
+      "fuzzy-core": {
+        "targets": {
+          "unit (src/lib.rs)": {
+            "passed": 0,
+            "failed": 0
+          },
+          "integration (tests/dmetaphone.rs)": {
+            "passed": 93,
+            "failed": 0
+          },
+          "integration (tests/nysiis.rs)": {
+            "passed": 30,
+            "failed": 0
+          },
+          "integration (tests/soundex.rs)": {
+            "passed": 22,
+            "failed": 0
+          },
+          "doc-tests": {
+            "passed": 0,
+            "failed": 0
+          }
+        },
+        "passed": 145,
+        "failed": 0
+      },
+      "fuzzy-py": {
+        "targets": {
+          "unit (src/lib.rs)": {
+            "passed": 0,
+            "failed": 0
+          }
+        },
+        "passed": 0,
+        "failed": 0
+      }
+    },
+    "total_passed": 165,
+    "total_failed": 0,
+    "exit_code": 0,
+    "note": "Counts parsed from a live `cargo test --workspace` run at generation time; per-crate attribution derives test-binary stems from the workspace layout (Cargo.toml [lib] names + tests/ dirs)."
+  },
+  "fuzz_campaigns": {
+    "source": "committed tools/reports/fuzz_*.json (enumerated via git ls-files)",
+    "command": "python tools/fuzz_diff.py --algo <algo> --count 50000 (default seed 20260803; services.yaml: fuzz-soundex / fuzz-nysiis / fuzz-dmetaphone)",
+    "algorithms": {
+      "dmetaphone": {
+        "report": "tools/reports/fuzz_dmetaphone_20260803_50000.json",
+        "seed": 20260803,
+        "cases": 50000,
+        "mismatch_count": 0,
+        "corpora": {
+          "empty": 522,
+          "single_char": 1639,
+          "ascii_words": 22612,
+          "name_like": 13624,
+          "mixed_case": 6231,
+          "digits_punct": 4310,
+          "very_long": 1062
+        },
+        "mode": "fixed",
+        "elapsed_s": 0.785,
+        "timestamp": "2026-08-03T05:31:14+00:00"
+      },
+      "nysiis": {
+        "report": "tools/reports/fuzz_nysiis_20260803_50000.json",
+        "seed": 20260803,
+        "cases": 50000,
+        "mismatch_count": 0,
+        "corpora": {
+          "empty": 531,
+          "single_char": 1548,
+          "ascii_words": 21348,
+          "name_like": 12809,
+          "mixed_case": 6165,
+          "digits_punct": 4106,
+          "unicode": 2434,
+          "very_long": 1059
+        },
+        "mode": "fixed",
+        "elapsed_s": 8.204,
+        "timestamp": "2026-08-03T08:35:23+00:00"
+      },
+      "soundex": {
+        "report": "tools/reports/fuzz_soundex_20260803_50000.json",
+        "seed": 20260803,
+        "cases": 50000,
+        "mismatch_count": 0,
+        "corpora": {
+          "empty": 502,
+          "single_char": 1513,
+          "ascii_words": 21272,
+          "name_like": 12690,
+          "mixed_case": 6243,
+          "digits_punct": 4140,
+          "unicode": 2582,
+          "very_long": 1058
+        },
+        "mode": "fixed",
+        "elapsed_s": 0.966,
+        "timestamp": "2026-08-03T08:35:13+00:00"
+      }
+    },
+    "total_cases": 150000,
+    "total_mismatches": 0,
+    "note": "dmetaphone: Rust port vs the compiled ORIGINAL C (tools/oracle-c). soundex/nysiis: Rust port vs tools/oracle_py.py (fixed semantics). elapsed_s/timestamp are informational fields from the committed reports."
+  },
+  "divergence_summary": {
+    "report": "tools/reports/divergence_soundex_20260803_50000.json",
+    "command": "python tools/fuzz_diff.py --algo soundex --mode original --count 50000 (seed 20260803; services.yaml: fuzz-soundex-divergence; expected exit code NON-zero -- the mismatches ARE the bug-fix evidence)",
+    "cases": 50000,
+    "seed": 20260803,
+    "mismatch_count": 14187,
+    "by_sanctioned_class": {
+      "soundex_size_gt4_padding_bug_14": 11605,
+      "soundex_non_ascii_input_bug_15": 2582
+    },
+    "unclassified": 0,
+    "recorded_mismatch_entries": 100,
+    "classification_method": "Deterministic re-run of the seeded corpus (same seed/count as the committed report) through fuzzy-cli and oracle_py --mode original, reusing tools/fuzz_diff.py's own generate_corpus/run_batch. expected=='ERROR non-ASCII input...' => bug #15; expected==actual right-padded with '0' => bug #14; anything else => unclassified. Re-run total cross-checked against the committed mismatch_count.",
+    "note": "ALL divergences from original Soundex semantics fall into the two sanctioned bug-fix classes (architecture.md section 2). nysiis and dmetaphone have ZERO divergence from original semantics (their fuzz reports above show mismatch_count 0)."
+  },
+  "known_limitations": [
+    "DMetaphone Latin-1 byte arms (0xC7 'C-cedilla' -> S, 0xD1 'N-tilde' -> N) are unreachable via the Python API: Python str input is UTF-8 and DMetaphone rejects non-ASCII by design, so those raw bytes can never arrive. The arms are ported for fidelity and covered natively through dmetaphone_bytes (latin1 tests).",
+    "Words containing spaces are not expressible in the fuzzy-cli batch protocol (the word field is one whitespace-delimited token), so the CLI fuzz corpora cannot include them; whitespace-in-word behavior is covered by native Rust tests instead.",
+    "DMetaphone non-ASCII input raises UnicodeEncodeError through the Python API by design (original behavior preserved per architecture.md section 2; only Soundex bugs #14/#15 are sanctioned fixes).",
+    "Soundex intentionally diverges from the original in exactly two classes: size > 4 is a maximum length, not a zero-pad target (bug #14), and non-ASCII input is unicode-uppercased then A-Z-filtered instead of raising UnicodeEncodeError (bug #15). These are the 3 XPASS results in the original suite and the 14187 cases in the committed divergence report.",
+    "The committed divergence report records at most 100 mismatch entries (MAX_RECORDED_MISMATCHES cap in tools/fuzz_diff.py); mismatch_count is the authoritative total, and the per-class counts in this file come from a deterministic re-run of the seeded corpus (see divergence_summary)."
+  ],
+  "headline": {
+    "original_suite": "2 passed, 3 xpassed",
+    "native_tests": "165 passed, 0 failed",
+    "fuzz": "150000 cases, 0 mismatches across soundex/nysiis/dmetaphone",
+    "divergence": "14187 intentional divergences, all in the 2 sanctioned bug-fix classes (#14 padding, #15 non-ASCII)"
+  }
+}
