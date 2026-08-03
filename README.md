@@ -40,6 +40,8 @@ src/                  ORIGINAL Cython + C sources (untouched; ground truth)
 test/                 ORIGINAL test directory (untouched)
 tests/original/       original pytest suite, byte-identical (SHA-256 pinned at
                       kickoff) + SHA256SUMS.txt + KICKOFF.md provenance
+tests/port/           NEW port-team pytest suite (fixed behaviors, type/error
+                      fidelity) — see tests/port/README.md
 rust/
   fuzzy-core/         the port: pure safe Rust, #![forbid(unsafe_code)], std-only
   fuzzy-cli/          batch-mode CLI over fuzzy-core (demo + fuzz driver)
@@ -53,6 +55,13 @@ tools/
   vectors/            curated Double Metaphone vectors (validated vs the C oracle)
   reports/            committed evidence: fuzz campaigns, divergence report,
                       original-suite output, pass_rates.json
+fuzz/
+  harness.py          campaign entry point (argv-forwarding wrapper over
+                      tools/fuzz_diff.py)
+  log.txt             the >=60 s survivor run log (2,400,000 dmetaphone cases,
+                      0 mismatches)
+.port-mortem.toml     submission metadata (track, source repo, kickoff hash)
+services.yaml         canonical command manifest (build/test/fuzz invocations)
 RULEBOOK.md           Cython/C → Rust translation rules + gap inventory
 DECISIONS.md          equivalence proof, bug root-cause write-ups, trade-offs
 DEMO.md               2–3 minute demo script (commands + expected output)

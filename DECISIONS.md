@@ -125,6 +125,22 @@ $py = "G:\AI\Projects\Github\Code-Resurrection\.venv\Scripts\python.exe"
 & $py tools\fuzz_diff.py --algo dmetaphone --count 50000 --out $env:TEMP\fuzzval
 ```
 
+### Fuzz survivor — the >= 60 s endurance run
+
+Separate from the three 50,000-case proof campaigns above (which remain the
+cited per-algorithm totals), one continuous dmetaphone **survivor campaign**
+ran **2,400,000** seeded cases (seed `20260803`) in **75.312 s** with **0
+mismatches** — the Rust port (via `fuzzy-cli`, pinned batch protocol) against
+the compiled original C oracle, end to end. The run is driven by
+`fuzz/harness.py` (a thin argv-forwarding wrapper over the pinned
+`tools/fuzz_diff.py` engine) and is documented in
+[`fuzz/log.txt`](fuzz/log.txt); the committed report
+[`tools/reports/fuzz_dmetaphone_20260803_2400000.json`](tools/reports/fuzz_dmetaphone_20260803_2400000.json)
+agrees with the log field-by-field (`algo`, `seed`, `cases`, `elapsed_s` >=
+60, `mismatch_count` = 0). Where the table above proves correctness on the
+architecture-minimum 50,000-case scale, this run proves the equivalence holds
+under a sustained 48x-larger campaign with zero divergence.
+
 ---
 
 ## 3. Bug #14 — Soundex pads to `size` unconditionally
@@ -358,6 +374,122 @@ Decisions where a faithful port pulled against idiom, and what we chose:
 
 ---
 
+## 8. Decision Log
+
+The non-trivial architectural decisions and divergences of this port, each
+with its rationale and a pointer to the section (or file) carrying the
+details. The two sanctioned bug fixes (entries 1–2) are the only behavioral
+divergences from the original; everything else is replication, structure, or
+process.
+
+1. **Fix upstream bug #14 — Soundex must not pad to `size` when
+   `size > 4`.** The original's `for i from written <= i < self.size:
+   out[i] = 48` loop makes `size` a pad target, so `Soundex(8)('Test')`
+   returns `'T2300000'`. The upstream issue and the project's own non-strict
+   xfail tests define the intent (`'T23'`), and the mission bug policy
+   sanctions exactly the fixes the upstream tests encode — so the port pads
+   only when `size <= 4` and treats larger sizes as a pure maximum length.
+   Details: section 3 (root cause, repro table); the divergence this creates
+   is measured in section 5.
+2. **Fix upstream bug #15 — Soundex normalizes non-ASCII input instead of
+   raising.** The root cause is Cython string marshalling
+   (`c_string_encoding=ascii` at the Python→C boundary), not the algorithm;
+   NYSIIS in the same file already normalized in pure Python. The port
+   applies that same rule to Soundex — Unicode-uppercase, then filter to
+   `A–Z` — so `Soundex(8)('Jéroboam') == 'J615'` and the third xfail test
+   XPASSes. Details: section 4.
+3. **Deliberately REPLICATE the DMetaphone non-ASCII limitation.** The same
+   module-wide Cython directive makes the original DMetaphone raise
+   `UnicodeEncodeError` on any non-ASCII input, and no upstream issue, test,
+   or readme defines an alternate behavior to restore. Byte-exact replication
+   of the raising behavior is therefore the equivalence-correct choice: this
+   is a known limitation, not a third sanctioned divergence. Details:
+   section 4 (shared root cause) and section 6, items 1 and 3.
+4. **Bytes-level DMetaphone API — `dmetaphone_bytes` and
+   `Option<Vec<u8>>`.** The C algorithm is byte-oriented, with case labels
+   for raw Latin-1 bytes (`0xC7` → S, `0xD1` → N), so modeling its codes as
+   UTF-8 `String`s would falsify the port. `fuzzy-core` returns
+   `Result<(Option<Vec<u8>>, Option<Vec<u8>>), NonAsciiError>` from
+   `dmetaphone(&str)` and exposes the raw `dmetaphone_bytes(&[u8])` entry
+   point, which keeps the Latin-1 arms reachable and natively tested even
+   though no Python `str` can ever carry those bytes. Details: section 7
+   (trade-offs) and section 6, item 1.
+5. **Preserve the simplified Soundex dedup — no H/W special-casing.** The
+   original appends a digit `d` iff `written == 1` or `last_written != d`;
+   the classic Soundex H/W adjacency rule is simply absent. We replicated the
+   simplified rule exactly — the goal is equivalence with *this* library, not
+   with a textbook — so `Tymczak` yields `T520`, not the classic `T522`. The
+   50,000-case fuzz campaign against a statement-exact oracle of the Cython
+   validates the choice. Details: section 7; RULEBOOK.md's Soundex rules.
+6. **`#![forbid(unsafe_code)]` in fuzzy-core/fuzzy-cli; PyO3 macro internals
+   only in fuzzy-py.** Memory safety is a scored hackathon criterion, so we
+   made it a compiler-enforced fact rather than a review comment: the forbid
+   attribute turns any unsafe block in the core crates into a hard compile
+   error. The C's raw-pointer metastring (`MetaphAdd` / `GetAt` / `SetAt`)
+   became a bounds-checked `Vec<u8>` model with the C's
+   out-of-range-returns-`0` semantics replicated in safe code; the only
+   `unsafe` anywhere in the port lives inside PyO3 0.23's own macro
+   expansions. Details: section 7; the sweeps are contract-gated
+   (VAL-DM-011, VAL-PAR-017).
+7. **`UnicodeEncodeError` 5-argument message fidelity.** When the PyO3 layer
+   maps fuzzy-core's `NonAsciiError`, it constructs a genuine
+   `UnicodeEncodeError('ascii', s, start, end, 'ordinal not in range(128)')`
+   — the same five-argument shape CPython's ASCII codec raises — instead of a
+   generic exception with a look-alike message. Because every character
+   before the offending one is ASCII, the byte position equals the character
+   index Python callers expect in `start`/`end`. Details: section 4;
+   `rust/fuzzy-py/src/lib.rs` (`unicode_encode_error`).
+8. **Negative `size` raises `ValueError` — validation the original lacked.**
+   The original C `int` size had no validation, so negative sizes were
+   undefined-behavior territory rather than a defined behavior to replicate.
+   The Rust core takes `usize` (negatives unrepresentable), and the PyO3
+   layer rejects a negative `size` with `ValueError` at construction for both
+   `Soundex` and `DMetaphone`. This diverges from the original only on input
+   the original never defined. Details: section 7.
+9. **CLI batch protocol — one line per case, `ERROR` lines never abort, BOM
+   stripping.** `fuzzy-cli` exists to drive 150,000-case differential
+   campaigns over stdin, so it trades generality for throughput: one
+   whitespace-delimited word token per line, exactly one output line per
+   input, `ERROR <message>` for malformed lines, and the process never aborts
+   the batch on a bad line. A stray UTF-8 BOM on the first line is stripped
+   so a BOM-emitting console pipe cannot corrupt the first token, even though
+   the protocol itself is pinned BOM-less. Details: section 7; the protocol
+   is pinned in the validation contract's Conventions.
+10. **Oracle-as-ground-truth doctrine — including the VAL-DM-005 contract
+    amendment.** Every equivalence claim is anchored to the original code,
+    not a re-remembered spec: the DMetaphone oracle *is* the original
+    `src/double_metaphone.c` compiled with MSVC, and the Soundex/NYSIIS
+    oracle is a statement-for-statement transcription of `src/fuzzy.pyx`.
+    When a hand-trace and the oracle disagreed (`bcdfgh` → `PKFK`, not the
+    traced `PKTF` — the C's Pierce-rule `else` swallows the following D), the
+    validation contract itself was amended in the oracle's favor: the oracle
+    wins, always. Details: section 1, leg 3.
+11. **The autocrlf / `.gitattributes` `-text` defense for hash-pinned
+    files.** This repo has `core.autocrlf=true`, which would silently
+    normalize CRLF line endings on commit and destroy the byte-identity of
+    the kickoff-pinned original test file. The fix was structural rather than
+    vigilance: a `.gitattributes` `-text` rule disables all text
+    normalization for `tests/original/test_fuzzy.py`, and
+    `tools/verify_original_hashes.py` re-verifies the SHA-256 at every gate
+    (the committed blob hash was checked via `git cat-file`, not just the
+    working copy). Details: AGENTS.md, part 1 §7;
+    `tests/original/SHA256SUMS.txt` and `KICKOFF.md`.
+12. **README.md / README.rst coexistence.** The original upstream
+    `README.rst` is kept byte-untouched as a historical artifact while the
+    submission readme lives in `README.md`. This is safe because GitHub
+    renders `README.md` in preference to `README.rst` when both exist in the
+    repository root, so the port's readme is the face of the repo without
+    deleting upstream history. Details: section 7; README.md's opening note.
+13. **The `rust/` layout with the original `src/` preserved untouched.** The
+    port lives in a new `rust/` workspace (`fuzzy-core`, `fuzzy-cli`,
+    `fuzzy-py`) while the original Cython+C sources under `src/` and `test/`
+    remain byte-identical to the upstream base commit. Keeping them in-tree
+    is what makes the equivalence proof self-contained: any judge can compile
+    the original C oracle and transcribe the Cython without leaving the repo.
+    Details: section 1; README.md's repository layout.
+
+---
+
 ## Evidence index
 
 | Artifact | What it proves |
@@ -365,6 +497,7 @@ Decisions where a faithful port pulled against idiom, and what we chose:
 | `tests/original/` + `SHA256SUMS.txt` + `KICKOFF.md` | Original tests preserved byte-identical (SHA-256 pinned at kickoff) |
 | `tools/reports/original_suite_output.txt` | Leg 1: 2 passed, 3 xpassed |
 | `tools/reports/fuzz_{soundex,nysiis,dmetaphone}_20260803_50000.json` | Leg 3: 50,000 cases each, 0 mismatches |
+| `fuzz/log.txt` + `tools/reports/fuzz_dmetaphone_20260803_2400000.json` | Section 2 survivor run: 2,400,000 cases in 75.312 s, 0 mismatches |
 | `tools/reports/divergence_soundex_20260803_50000.json` | Section 5: 14,187 divergences, all in the 2 sanctioned classes |
 | `tools/reports/pass_rates.json` | The aggregate scoreboard quoted in sections 1, 2, and 6 |
 | `RULEBOOK.md` | The translation rules and gap inventory the port was built against |
